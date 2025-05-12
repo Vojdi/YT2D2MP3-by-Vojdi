@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "YT2D2MP3/1.0.0": {
+        "runtime": {
+          "YT2D2MP3.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "YT2D2MP3/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
