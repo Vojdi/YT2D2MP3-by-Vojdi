@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>YT2D2MP3</id>
+    <version>1.0.0</version>
+    <authors>YT2D2MP3</authors>
+    <description>Package Description</description>
+    <repository type="git" />
+    <dependencies>
+      <group targetFramework="net8.0-windows7.0" />
+    </dependencies>
+    <frameworkReferences>
+      <group targetFramework="net8.0-windows7.0">
+        <frameworkReference name="Microsoft.WindowsDesktop.App.WindowsForms" />
+      </group>
+    </frameworkReferences>
+  </metadata>
+  <files>
+    <file src="C:\Users\vojta\source\repos\YT2D2MP3\YT2D2MP3\bin\Debug\net8.0-windows\YT2D2MP3.runtimeconfig.json" target="lib\net8.0-windows7.0\YT2D2MP3.runtimeconfig.json" />
+    <file src="C:\Users\vojta\source\repos\YT2D2MP3\YT2D2MP3\bin\Debug\net8.0-windows\YT2D2MP3.dll" target="lib\net8.0-windows7.0\YT2D2MP3.dll" />
+  </files>
+</package>
