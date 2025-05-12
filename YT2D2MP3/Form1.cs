@@ -15,7 +15,6 @@ namespace YT2D2MP3
             formatComboBox.SelectedIndexChanged += formatComboBox_SelectedIndexChanged;
             formatComboBox.SelectedIndex = 0;
         }
-
         private void formatComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             qualityComboBox.Items.Clear();
