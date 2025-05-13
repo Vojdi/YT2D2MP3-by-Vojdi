@@ -14,6 +14,7 @@ A simple application that downloads YouTube videos as MP3 or MP4 in desired qual
 
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp)
 - [ffmpeg](https://ffmpeg.org)
-(both of them included in the release)
+
+#### (both of them included in the release)
 
 
