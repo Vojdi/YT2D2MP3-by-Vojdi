@@ -30,3 +30,7 @@ C:\Users\vojta\source\repos\YT2D2MP3-by-Vojdi\YT2D2MP3\bin\Debug\net8.0-windows\
 C:\Users\vojta\source\repos\YT2D2MP3-by-Vojdi\YT2D2MP3\bin\Debug\net8.0-windows\YT2D2MP3.pdb
 C:\Users\vojta\source\repos\YT2D2MP3-by-Vojdi\YT2D2MP3\obj\Debug\net8.0-windows\YT2D2MP3.genruntimeconfig.cache
 C:\Users\vojta\source\repos\YT2D2MP3-by-Vojdi\YT2D2MP3\obj\Debug\net8.0-windows\ref\YT2D2MP3.dll
+C:\Users\vojta\source\repos\YT2D2MP3-by-Vojdi\YT2D2MP3\obj\Debug\net8.0-windows\YT2D2MP3.sourcelink.json
+C:\Users\vojta\source\repos\YT2D2MP3-by-Vojdi\YT2D2MP3\obj\Debug\net8.0-windows\YT2D2MP3.csproj.AssemblyReference.cache
+C:\Users\vojta\source\repos\YT2D2MP3-by-Vojdi\YT2D2MP3\bin\Debug\net8.0-windows\TagLibSharp.dll
+C:\Users\vojta\source\repos\YT2D2MP3-by-Vojdi\YT2D2MP3\obj\Debug\net8.0-windows\YT2D2MP3.csproj.Up2Date

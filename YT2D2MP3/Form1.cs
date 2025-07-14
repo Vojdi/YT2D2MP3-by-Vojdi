@@ -1,9 +1,9 @@
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using TagLib;
 
 namespace YT2D2MP3
 {
@@ -15,6 +15,7 @@ namespace YT2D2MP3
             formatComboBox.SelectedIndexChanged += formatComboBox_SelectedIndexChanged;
             formatComboBox.SelectedIndex = 0;
         }
+
         private void formatComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             qualityComboBox.Items.Clear();
@@ -26,9 +27,12 @@ namespace YT2D2MP3
             else if (formatComboBox.SelectedItem?.ToString() == "mp4")
             {
                 qualityComboBox.Items.AddRange(new[] {
-                     "2160p (4K)", "1440p", "1080p", "720p", "480p", "360p", "240p", "144p"});
+                    "2160p (4K)", "1440p", "1080p", "720p", "480p", "360p", "240p", "144p" });
                 qualityComboBox.SelectedIndex = 0;
             }
+            bool isMp3 = formatComboBox.SelectedItem?.ToString() == "mp3";
+            labelPerformers.Visible = isMp3;
+            interprets.Visible = isMp3;
         }
 
         private void AppendText(string text)
@@ -55,7 +59,7 @@ namespace YT2D2MP3
             string ytDlpPath = Path.Combine(exeDir, "yt-dlp.exe");
             string ffmpegPath = Path.Combine(exeDir, "ffmpeg.exe");
 
-            if (!File.Exists(ytDlpPath) || !File.Exists(ffmpegPath))
+            if (!System.IO.File.Exists(ytDlpPath) || !System.IO.File.Exists(ffmpegPath))
             {
                 MessageBox.Show("yt-dlp.exe or ffmpeg.exe not found in the application directory.");
                 return;
@@ -102,7 +106,7 @@ namespace YT2D2MP3
                         "Low (V9)" => "9",
                         _ => "0"
                     };
-                    arguments = $"-x --audio-format mp3 --audio-quality {audioQuality} -o \"{outputPath}\" {url}";
+                    arguments = $"-x --audio-format mp3 --audio-quality {audioQuality} -o \"{outputPath}\" --no-mtime {url}";
                 }
                 else if (selectedFormat == "mp4")
                 {
@@ -119,7 +123,7 @@ namespace YT2D2MP3
                         _ => "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]"
                     };
 
-                    arguments = $"-f {resolutionFilter} -o \"{outputPath}\" {url}";
+                    arguments = $"-f {resolutionFilter} -o \"{outputPath}\" --no-mtime {url}";
                 }
 
                 ProcessStartInfo psi = new ProcessStartInfo
@@ -152,7 +156,31 @@ namespace YT2D2MP3
                         downloadButton.Enabled = true;
 
                         string folder = Path.GetDirectoryName(outputPath);
-                        if (Directory.Exists(folder))
+
+                        // ✅ Update MP3 metadata
+                        if (Path.GetExtension(outputPath).ToLower() == ".mp3")
+                        {
+                            try
+                            {
+                                string title = Path.GetFileNameWithoutExtension(outputPath);
+                                var file = TagLib.File.Create(outputPath);
+                                file.Tag.Title = title;
+
+                                // ✅ Parse interprets from the RichTextBox (one per line)
+                                var artistLines = interprets.Text
+                                    .Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries);
+                                file.Tag.Performers = artistLines;
+
+                                file.Save();
+                                AppendText($"[Tag Updated] Title: {title}, Interprets: {string.Join(", ", artistLines)}\r\n");
+                            }
+                            catch (Exception ex)
+                            {
+                                AppendText($"[Tag Error] Could not set MP3 metadata: {ex.Message}\r\n");
+                            }
+                        }
+
+                        if (openFolderCheckBox.Checked && Directory.Exists(folder))
                         {
                             Process.Start("explorer.exe", folder);
                         }
@@ -171,6 +199,12 @@ namespace YT2D2MP3
                     downloadButton.Enabled = true;
                 }
             }
+        }
+
+        private void clear_Click(object sender, EventArgs e)
+        {
+            interprets.Clear();
+            urlTextBox.Clear();
         }
     }
 }
