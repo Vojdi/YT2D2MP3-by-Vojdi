@@ -5,6 +5,7 @@ A simple application that downloads YouTube videos as MP3 or MP4 in desired qual
 ## Features
 
 - MP3 and MP4 format selection
+- Adding Performers to the MP3 file
 - Quality presets for both formats
 - no paid bullshi
 
