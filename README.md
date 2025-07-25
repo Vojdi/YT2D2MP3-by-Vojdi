@@ -11,12 +11,12 @@ A simple application that downloads YouTube videos as MP3 or MP4 in desired qual
 
 
 
-## This app REQUIRES:
+## This app REQUIRES DOWNLOADING:
 
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp)
-- [ffmpeg](https://ffmpeg.org)
+- [ffmpeg](https://ffmpeg.org/download.html#build-windows)
 
-#### You NEED to download these 2 and put them in the downloaded folder(just the .exe files)
+#### You NEED to download latest versions of these 2 and put their .exe files in the downloaded folder
 In case the app stopped working suddenly, try reinstalling the latest version of yt-dlp
 
 
