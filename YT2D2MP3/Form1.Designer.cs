@@ -181,7 +181,9 @@
             Controls.Add(urlTextBox);
             Controls.Add(statusBox);
             Controls.Add(downloadButton);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
+            MaximizeBox = false;
             Name = "Form1";
             Text = "YT2D2MP3";
             ResumeLayout(false);
