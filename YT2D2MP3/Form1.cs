@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
 using TagLib;
 
@@ -9,28 +8,38 @@ namespace YT2D2MP3
 {
     public partial class Form1 : Form
     {
+        private Process currentDownloadProcess;
+        private string currentDownloadFolder;
+
         public Form1()
         {
             InitializeComponent();
+
+            // Only subscribe to events that are NOT assigned in designer
             formatComboBox.SelectedIndexChanged += formatComboBox_SelectedIndexChanged;
             formatComboBox.SelectedIndex = 0;
+
+            stopButton.Enabled = false;
         }
 
         private void formatComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             qualityComboBox.Items.Clear();
-            if (formatComboBox.SelectedItem?.ToString() == "mp3")
+            bool isMp3 = formatComboBox.SelectedItem?.ToString() == "mp3";
+
+            if (isMp3)
             {
                 qualityComboBox.Items.AddRange(new[] { "Best (VBR) - 0", "High (V2)", "Medium (V5)", "Low (V9)" });
                 qualityComboBox.SelectedIndex = 0;
             }
-            else if (formatComboBox.SelectedItem?.ToString() == "mp4")
+            else
             {
                 qualityComboBox.Items.AddRange(new[] {
-                    "2160p (4K)", "1440p", "1080p", "720p", "480p", "360p", "240p", "144p" });
+                    "2160p (4K)", "1440p", "1080p", "720p", "480p", "360p", "240p", "144p"
+                });
                 qualityComboBox.SelectedIndex = 0;
             }
-            bool isMp3 = formatComboBox.SelectedItem?.ToString() == "mp3";
+
             labelPerformers.Visible = isMp3;
             interprets.Visible = isMp3;
         }
@@ -42,13 +51,24 @@ namespace YT2D2MP3
                 Invoke(new Action<string>(AppendText), text);
                 return;
             }
-            statusBox.AppendText(text);
+            statusBox.AppendText(text + "\r\n");
+        }
+
+        private void browseFolderButton_Click_1(object sender, EventArgs e)
+        {
+            using var folderDialog = new FolderBrowserDialog
+            {
+                Description = "Select download folder"
+            };
+            if (folderDialog.ShowDialog() == DialogResult.OK)
+            {
+                folderTextBox.Text = folderDialog.SelectedPath;
+            }
         }
 
         private void downloadButton_Click(object sender, EventArgs e)
         {
             string url = urlTextBox.Text.Trim();
-
             if (string.IsNullOrEmpty(url))
             {
                 MessageBox.Show("Please enter a YouTube URL.");
@@ -67,144 +87,189 @@ namespace YT2D2MP3
 
             if (formatComboBox.SelectedItem == null || qualityComboBox.SelectedItem == null)
             {
-                MessageBox.Show("Please select a format and quality.", "Input Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select a format and quality.", "Input Required",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             string selectedFormat = formatComboBox.SelectedItem.ToString();
             string selectedQuality = qualityComboBox.SelectedItem.ToString();
 
-            string defaultExtension = selectedFormat == "mp3" ? "mp3" : "mp4";
-            string filter = selectedFormat == "mp3" ? "MP3 Files (*.mp3)|*.mp3" : "MP4 Files (*.mp4)|*.mp4";
-
-            using (SaveFileDialog saveDialog = new SaveFileDialog())
+            string saveFolder = folderTextBox.Text.Trim();
+            if (string.IsNullOrEmpty(saveFolder) || !Directory.Exists(saveFolder))
             {
-                saveDialog.Filter = filter;
-                saveDialog.Title = "Save File As";
-                saveDialog.DefaultExt = defaultExtension;
-                saveDialog.FileName = $"output.{defaultExtension}";
+                MessageBox.Show("Please select a valid folder to save the file.", "Folder Required",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-                if (saveDialog.ShowDialog() != DialogResult.OK)
+            string fileName = fileNameTextBox.Text.Trim();
+            string extension = selectedFormat == "mp3" ? ".mp3" : ".mp4";
+
+            bool isPlaylist = playlistCheckBox.Checked;
+
+            string outputPath = isPlaylist
+                ? Path.Combine(saveFolder, "%(title)s.%(ext)s")
+                : Path.Combine(saveFolder, string.IsNullOrEmpty(fileName) ? "output" + extension : fileName + extension);
+
+            currentDownloadFolder = saveFolder;
+
+            downloadButton.Enabled = false;
+            stopButton.Enabled = true;
+            statusBox.Text = "Downloading... Please wait.\r\n";
+
+            string playlistFlag = isPlaylist ? "" : "--no-playlist";
+
+            string arguments;
+            if (selectedFormat == "mp3")
+            {
+                string audioQuality = selectedQuality switch
                 {
-                    return;
-                }
-
-                string outputPath = saveDialog.FileName;
-
-                downloadButton.Enabled = false;
-                statusBox.Text = "Downloading... Please wait.\r\n";
-
-                string arguments = string.Empty;
-
-                if (selectedFormat == "mp3")
-                {
-                    string audioQuality = selectedQuality switch
-                    {
-                        "Best (VBR) - 0" => "0",
-                        "High (V2)" => "2",
-                        "Medium (V5)" => "5",
-                        "Low (V9)" => "9",
-                        _ => "0"
-                    };
-                    arguments = $"-x --audio-format mp3 --audio-quality {audioQuality} -o \"{outputPath}\" --no-mtime {url}";
-                }
-                else if (selectedFormat == "mp4")
-                {
-                    string resolutionFilter = selectedQuality switch
-                    {
-                        "2160p (4K)" => "bestvideo[height<=2160][ext=mp4]+bestaudio[ext=m4a]/best[height<=2160][ext=mp4]",
-                        "1440p" => "bestvideo[height<=1440][ext=mp4]+bestaudio[ext=m4a]/best[height<=1440][ext=mp4]",
-                        "1080p" => "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]",
-                        "720p" => "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]",
-                        "480p" => "bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/best[height<=480][ext=mp4]",
-                        "360p" => "bestvideo[height<=360][ext=mp4]+bestaudio[ext=m4a]/best[height<=360][ext=mp4]",
-                        "240p" => "bestvideo[height<=240][ext=mp4]+bestaudio[ext=m4a]/best[height<=240][ext=mp4]",
-                        "144p" => "bestvideo[height<=144][ext=mp4]+bestaudio[ext=m4a]/best[height<=144][ext=mp4]",
-                        _ => "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]"
-                    };
-
-                    arguments = $"-f {resolutionFilter} -o \"{outputPath}\" --no-mtime {url}";
-                }
-
-                ProcessStartInfo psi = new ProcessStartInfo
-                {
-                    FileName = ytDlpPath,
-                    Arguments = arguments,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true
+                    "Best (VBR) - 0" => "0",
+                    "High (V2)" => "2",
+                    "Medium (V5)" => "5",
+                    "Low (V9)" => "9",
+                    _ => "0"
                 };
-
-                Process proc = new Process { StartInfo = psi, EnableRaisingEvents = true };
-
-                proc.OutputDataReceived += (s, ea) =>
+                arguments = $"-x --audio-format mp3 --audio-quality {audioQuality} -o \"{outputPath}\" --no-mtime {playlistFlag} {url}";
+            }
+            else // mp4
+            {
+                string resolutionFilter = selectedQuality switch
                 {
-                    if (!string.IsNullOrEmpty(ea.Data))
-                        AppendText(ea.Data + "\r\n");
+                    "2160p (4K)" => "bestvideo[height<=2160][ext=mp4]+bestaudio[ext=m4a]/best[height<=2160][ext=mp4]",
+                    "1440p" => "bestvideo[height<=1440][ext=mp4]+bestaudio[ext=m4a]/best[height<=1440][ext=mp4]",
+                    "1080p" => "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]",
+                    "720p" => "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]",
+                    "480p" => "bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/best[height<=480][ext=mp4]",
+                    "360p" => "bestvideo[height<=360][ext=mp4]+bestaudio[ext=m4a]/best[height<=360][ext=mp4]",
+                    "240p" => "bestvideo[height<=240][ext=mp4]+bestaudio[ext=m4a]/best[height<=240][ext=mp4]",
+                    "144p" => "bestvideo[height<=144][ext=mp4]+bestaudio[ext=m4a]/best[height<=144][ext=mp4]",
+                    _ => "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]"
                 };
-                proc.ErrorDataReceived += (s, ea) =>
+                arguments = $"-f {resolutionFilter} -o \"{outputPath}\" --no-mtime {playlistFlag} {url}";
+            }
+
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = ytDlpPath,
+                Arguments = arguments,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true
+            };
+
+            currentDownloadProcess = new Process { StartInfo = psi, EnableRaisingEvents = true };
+
+            currentDownloadProcess.OutputDataReceived += (s, ea) =>
+            {
+                if (!string.IsNullOrEmpty(ea.Data))
+                    AppendText(ea.Data);
+            };
+
+            currentDownloadProcess.ErrorDataReceived += (s, ea) =>
+            {
+                if (!string.IsNullOrEmpty(ea.Data))
+                    AppendText("[Error] " + ea.Data);
+            };
+
+            currentDownloadProcess.Exited += (s, ea) =>
+            {
+                Invoke((MethodInvoker)(() =>
                 {
-                    if (!string.IsNullOrEmpty(ea.Data))
-                        AppendText("[Error] " + ea.Data + "\r\n");
-                };
-                proc.Exited += (s, ea) =>
-                {
-                    Invoke((MethodInvoker)(() =>
+                    downloadButton.Enabled = true;
+                    stopButton.Enabled = false;
+                    statusBox.AppendText("\r\nDone.\r\n");
+                    currentDownloadProcess = null;
+
+                    if (!isPlaylist && selectedFormat == "mp3")
                     {
-                        statusBox.AppendText("\r\nDone.\r\n");
-                        downloadButton.Enabled = true;
-
-                        string folder = Path.GetDirectoryName(outputPath);
-
-                        // ✅ Update MP3 metadata
-                        if (Path.GetExtension(outputPath).ToLower() == ".mp3")
+                        try
                         {
-                            try
-                            {
-                                string title = Path.GetFileNameWithoutExtension(outputPath);
-                                var file = TagLib.File.Create(outputPath);
-                                file.Tag.Title = title;
+                            string title = Path.GetFileNameWithoutExtension(outputPath);
+                            var file = TagLib.File.Create(outputPath);
+                            file.Tag.Title = title;
 
-                                // ✅ Parse interprets from the RichTextBox (one per line)
-                                var artistLines = interprets.Text
-                                    .Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries);
-                                file.Tag.Performers = artistLines;
+                            var artistLines = interprets.Text
+                                .Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries);
+                            file.Tag.Performers = artistLines;
 
-                                file.Save();
-                                AppendText($"[Tag Updated] Title: {title}, Interprets: {string.Join(", ", artistLines)}\r\n");
-                            }
-                            catch (Exception ex)
-                            {
-                                AppendText($"[Tag Error] Could not set MP3 metadata: {ex.Message}\r\n");
-                            }
+                            file.Save();
+                            AppendText($"[Tag Updated] Title: {title}, Interprets: {string.Join(", ", artistLines)}");
                         }
-
-                        if (openFolderCheckBox.Checked && Directory.Exists(folder))
+                        catch (Exception ex)
                         {
-                            Process.Start("explorer.exe", folder);
+                            AppendText($"[Tag Error] Could not set MP3 metadata: {ex.Message}");
                         }
-                    }));
-                };
+                    }
 
+                    if (openFolderCheckBox.Checked && Directory.Exists(saveFolder))
+                    {
+                        Process.Start("explorer.exe", saveFolder);
+                    }
+                }));
+            };
+
+            try
+            {
+                currentDownloadProcess.Start();
+                currentDownloadProcess.BeginOutputReadLine();
+                currentDownloadProcess.BeginErrorReadLine();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error running yt-dlp: " + ex.Message);
+                downloadButton.Enabled = true;
+                stopButton.Enabled = false;
+            }
+        }
+
+        private void stopButton_Click(object sender, EventArgs e)
+        {
+            StopDownload();
+        }
+
+        private void StopDownload()
+        {
+            if (currentDownloadProcess != null && !currentDownloadProcess.HasExited)
+            {
                 try
                 {
-                    proc.Start();
-                    proc.BeginOutputReadLine();
-                    proc.BeginErrorReadLine();
+#if NET5_0_OR_GREATER
+                    currentDownloadProcess.Kill(true);
+#else
+                    currentDownloadProcess.Kill();
+#endif
+                    AppendText("\r\n[Stopped] Download canceled by user.");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error running yt-dlp: " + ex.Message);
-                    downloadButton.Enabled = true;
+                    AppendText($"[Error] Could not stop process: {ex.Message}");
                 }
             }
+
+            if (!string.IsNullOrEmpty(currentDownloadFolder) && Directory.Exists(currentDownloadFolder))
+            {
+                foreach (var file in Directory.GetFiles(currentDownloadFolder, "*.part"))
+                {
+                    try { System.IO.File.Delete(file); }
+                    catch { }
+                }
+            }
+
+            stopButton.Enabled = false;
+            downloadButton.Enabled = true;
+            currentDownloadProcess = null;
         }
 
         private void clear_Click(object sender, EventArgs e)
         {
             interprets.Clear();
             urlTextBox.Clear();
+            fileNameTextBox.Clear();
+            folderTextBox.Clear();
+            statusBox.Clear();
         }
     }
 }
