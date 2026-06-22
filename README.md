@@ -15,13 +15,7 @@
 - [ffmpeg](https://www.gyan.dev/ffmpeg/builds) - audio/video file conversion
 
 ## Setup
-### option 1: download the lazy release
-- contains all dependencies
-- may stop working over time(old version of yt-dlp)
-### option 2: download the normal release
-#### step 1 - download the latest versions of yt dlp and ffmpeg(contains ffmpeg and ffprobe) from the links above
-#### step 2 - put the 3 exe files(yt-dlp, ffmpeg and ffprobe) inside the downloaded release folder
-#### step 3 - open the main .exe (YT2D2MP3) and enjoy
+- Download, unzip, YT2D2MP3.exe
 
 
 
