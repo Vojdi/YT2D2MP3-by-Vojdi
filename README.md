@@ -15,7 +15,7 @@
 - [ffmpeg](https://www.gyan.dev/ffmpeg/builds) - audio/video file conversion
 
 ## Setup
-- Download, unzip, YT2D2MP3.exe
+- Download, Unzip, Start YT2D2MP3.exe
 
 
 
