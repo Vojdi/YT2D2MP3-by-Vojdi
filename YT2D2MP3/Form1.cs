@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.Intrinsics.Arm;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TagLib;
 
@@ -15,7 +17,6 @@ namespace YT2D2MP3
         {
             InitializeComponent();
 
-            // Only subscribe to events that are NOT assigned in designer
             formatComboBox.SelectedIndexChanged += formatComboBox_SelectedIndexChanged;
             formatComboBox.SelectedIndex = 0;
 
@@ -103,14 +104,22 @@ namespace YT2D2MP3
                 return;
             }
 
-            string fileName = fileNameTextBox.Text.Trim();
+            bool playlistRequested = playlistCheckBox.Checked; // Only download playlist if checked
+
             string extension = selectedFormat == "mp3" ? ".mp3" : ".mp4";
+            string outputPath;
 
-            bool isPlaylist = playlistCheckBox.Checked;
-
-            string outputPath = isPlaylist
-                ? Path.Combine(saveFolder, "%(title)s.%(ext)s")
-                : Path.Combine(saveFolder, string.IsNullOrEmpty(fileName) ? "output" + extension : fileName + extension);
+            if (playlistRequested)
+            {
+                outputPath = Path.Combine(saveFolder, "%(title)s.%(ext)s");
+            }
+            else
+            {
+                string userFileName = fileNameTextBox.Text.Trim();
+                outputPath = string.IsNullOrEmpty(userFileName)
+                    ? Path.Combine(saveFolder, "%(title)s.%(ext)s")
+                    : Path.Combine(saveFolder, userFileName + extension);
+            }
 
             currentDownloadFolder = saveFolder;
 
@@ -118,7 +127,7 @@ namespace YT2D2MP3
             stopButton.Enabled = true;
             statusBox.Text = "Downloading... Please wait.\r\n";
 
-            string playlistFlag = isPlaylist ? "" : "--no-playlist";
+            string playlistFlag = playlistRequested ? "" : "--no-playlist";
 
             string arguments;
             if (selectedFormat == "mp3")
@@ -183,24 +192,26 @@ namespace YT2D2MP3
                     statusBox.AppendText("\r\nDone.\r\n");
                     currentDownloadProcess = null;
 
-                    if (!isPlaylist && selectedFormat == "mp3")
+                    if (!playlistRequested && Path.GetExtension(outputPath).ToLower() == ".mp3")
                     {
                         try
                         {
                             string title = Path.GetFileNameWithoutExtension(outputPath);
                             var file = TagLib.File.Create(outputPath);
+
                             file.Tag.Title = title;
 
                             var artistLines = interprets.Text
                                 .Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries);
-                            file.Tag.Performers = artistLines;
+                            if (artistLines.Length > 0)
+                                file.Tag.Performers = artistLines;
 
                             file.Save();
-                            AppendText($"[Tag Updated] Title: {title}, Interprets: {string.Join(", ", artistLines)}");
+                            AppendText($"[Tag Updated] Title: {title}, Interprets: {string.Join(", ", artistLines)}\r\n");
                         }
                         catch (Exception ex)
                         {
-                            AppendText($"[Tag Error] Could not set MP3 metadata: {ex.Message}");
+                            AppendText($"[Tag Error] Could not set MP3 metadata: {ex.Message}\r\n");
                         }
                     }
 
@@ -253,8 +264,7 @@ namespace YT2D2MP3
             {
                 foreach (var file in Directory.GetFiles(currentDownloadFolder, "*.part"))
                 {
-                    try { System.IO.File.Delete(file); }
-                    catch { }
+                    try { System.IO.File.Delete(file); } catch { }
                 }
             }
 
@@ -270,6 +280,63 @@ namespace YT2D2MP3
             fileNameTextBox.Clear();
             folderTextBox.Clear();
             statusBox.Clear();
+        }
+
+        private void playlistCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            bool isPlaylist = playlistCheckBox.Checked;
+            fileNameTextBox.ReadOnly = isPlaylist;
+            interprets.ReadOnly = isPlaylist;
+        }
+
+        private async void Form1_Load(object sender, EventArgs e)
+        {
+            downloadButton.Enabled = false;
+            statusBox.Text = "Checking for yt-dlp updates...\r\n";
+
+            await UpdateYtDlpAsync();
+
+            downloadButton.Enabled = true;
+            statusBox.AppendText("Ready.\r\n");
+        }
+
+        private Task UpdateYtDlpAsync()
+        {
+            return Task.Run(() =>
+            {
+                string exeDir = AppDomain.CurrentDomain.BaseDirectory;
+                string ytDlpPath = Path.Combine(exeDir, "yt-dlp.exe");
+
+                if (!System.IO.File.Exists(ytDlpPath))
+                {
+                    this.Invoke((MethodInvoker)(() => {
+                        MessageBox.Show("yt-dlp.exe was not found in the application folder.\nPlease ensure it sits in the same directory as this executable.", "Missing File", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }));
+                    return;
+                }
+
+                try
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo
+                    {
+                        FileName = ytDlpPath,
+                        Arguments = "-U",
+                        CreateNoWindow = true,
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true
+                    };
+
+                    using (Process process = Process.Start(startInfo))
+                    {
+                        process.WaitForExit();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Failed to update yt-dlp: {ex.Message}");
+                }
+            });
         }
     }
 }

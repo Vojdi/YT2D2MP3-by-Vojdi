@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("YT2D2MP3")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d93200ff74b8907fe2f7125e132b7a5ed36eb7bf")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+473709feda407e368eeca472ac2a0ec48df310b1")]
 [assembly: System.Reflection.AssemblyProductAttribute("YT2D2MP3")]
 [assembly: System.Reflection.AssemblyTitleAttribute("YT2D2MP3")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

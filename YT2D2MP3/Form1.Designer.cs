@@ -53,9 +53,10 @@
             // 
             // downloadButton
             // 
-            downloadButton.Location = new Point(483, 259);
+            downloadButton.Location = new Point(386, 207);
+            downloadButton.Margin = new Padding(2, 2, 2, 2);
             downloadButton.Name = "downloadButton";
-            downloadButton.Size = new Size(298, 34);
+            downloadButton.Size = new Size(238, 27);
             downloadButton.TabIndex = 0;
             downloadButton.Text = "Download";
             downloadButton.UseVisualStyleBackColor = true;
@@ -63,36 +64,40 @@
             // 
             // statusBox
             // 
-            statusBox.Location = new Point(95, 341);
+            statusBox.Location = new Point(76, 273);
+            statusBox.Margin = new Padding(2, 2, 2, 2);
             statusBox.Name = "statusBox";
             statusBox.ReadOnly = true;
-            statusBox.Size = new Size(1090, 144);
+            statusBox.Size = new Size(873, 116);
             statusBox.TabIndex = 3;
             statusBox.Text = "";
             // 
             // urlTextBox
             // 
-            urlTextBox.Location = new Point(97, 12);
+            urlTextBox.Location = new Point(78, 10);
+            urlTextBox.Margin = new Padding(2, 2, 2, 2);
             urlTextBox.Name = "urlTextBox";
-            urlTextBox.Size = new Size(1088, 115);
+            urlTextBox.Size = new Size(871, 93);
             urlTextBox.TabIndex = 4;
             urlTextBox.Text = "";
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(31, 12);
+            label1.Location = new Point(25, 10);
+            label1.Margin = new Padding(2, 0, 2, 0);
             label1.Name = "label1";
-            label1.Size = new Size(43, 25);
+            label1.Size = new Size(35, 20);
             label1.TabIndex = 5;
             label1.Text = "URL";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(31, 346);
+            label2.Location = new Point(25, 277);
+            label2.Margin = new Padding(2, 0, 2, 0);
             label2.Name = "label2";
-            label2.Size = new Size(60, 25);
+            label2.Size = new Size(49, 20);
             label2.TabIndex = 6;
             label2.Text = "Status";
             // 
@@ -100,34 +105,38 @@
             // 
             formatComboBox.FormattingEnabled = true;
             formatComboBox.Items.AddRange(new object[] { "mp3", "mp4" });
-            formatComboBox.Location = new Point(214, 238);
+            formatComboBox.Location = new Point(171, 190);
+            formatComboBox.Margin = new Padding(2, 2, 2, 2);
             formatComboBox.Name = "formatComboBox";
-            formatComboBox.Size = new Size(212, 33);
+            formatComboBox.Size = new Size(170, 28);
             formatComboBox.TabIndex = 7;
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(142, 247);
+            label3.Location = new Point(114, 198);
+            label3.Margin = new Padding(2, 0, 2, 0);
             label3.Name = "label3";
-            label3.Size = new Size(66, 25);
+            label3.Size = new Size(54, 20);
             label3.TabIndex = 8;
             label3.Text = "format";
             // 
             // qualityComboBox
             // 
             qualityComboBox.FormattingEnabled = true;
-            qualityComboBox.Location = new Point(214, 290);
+            qualityComboBox.Location = new Point(171, 232);
+            qualityComboBox.Margin = new Padding(2, 2, 2, 2);
             qualityComboBox.Name = "qualityComboBox";
-            qualityComboBox.Size = new Size(212, 33);
+            qualityComboBox.Size = new Size(170, 28);
             qualityComboBox.TabIndex = 9;
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(143, 297);
+            label4.Location = new Point(114, 238);
+            label4.Margin = new Padding(2, 0, 2, 0);
             label4.Name = "label4";
-            label4.Size = new Size(65, 25);
+            label4.Size = new Size(54, 20);
             label4.TabIndex = 10;
             label4.Text = "quality";
             // 
@@ -135,18 +144,20 @@
             // 
             openFolderCheckBox.AutoSize = true;
             openFolderCheckBox.BackColor = SystemColors.Window;
-            openFolderCheckBox.Location = new Point(483, 222);
+            openFolderCheckBox.Location = new Point(386, 178);
+            openFolderCheckBox.Margin = new Padding(2, 2, 2, 2);
             openFolderCheckBox.Name = "openFolderCheckBox";
-            openFolderCheckBox.Size = new Size(298, 29);
+            openFolderCheckBox.Size = new Size(249, 24);
             openFolderCheckBox.TabIndex = 11;
             openFolderCheckBox.Text = "Open File Location on Download";
             openFolderCheckBox.UseVisualStyleBackColor = false;
             // 
             // interprets
             // 
-            interprets.Location = new Point(920, 220);
+            interprets.Location = new Point(736, 176);
+            interprets.Margin = new Padding(2, 2, 2, 2);
             interprets.Name = "interprets";
-            interprets.Size = new Size(265, 113);
+            interprets.Size = new Size(213, 91);
             interprets.TabIndex = 12;
             interprets.Text = "";
             // 
@@ -154,17 +165,19 @@
             // 
             labelPerformers.AutoSize = true;
             labelPerformers.BackColor = SystemColors.Window;
-            labelPerformers.Location = new Point(954, 180);
+            labelPerformers.Location = new Point(763, 144);
+            labelPerformers.Margin = new Padding(2, 0, 2, 0);
             labelPerformers.Name = "labelPerformers";
-            labelPerformers.Size = new Size(211, 25);
+            labelPerformers.Size = new Size(178, 20);
             labelPerformers.TabIndex = 13;
             labelPerformers.Text = "Performers(one line each)";
             // 
             // clear
             // 
-            clear.Location = new Point(483, 297);
+            clear.Location = new Point(386, 238);
+            clear.Margin = new Padding(2, 2, 2, 2);
             clear.Name = "clear";
-            clear.Size = new Size(298, 38);
+            clear.Size = new Size(238, 30);
             clear.TabIndex = 14;
             clear.Text = "Clear All";
             clear.UseVisualStyleBackColor = true;
@@ -173,33 +186,37 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(114, 187);
+            label5.Location = new Point(91, 150);
+            label5.Margin = new Padding(2, 0, 2, 0);
             label5.Name = "label5";
-            label5.Size = new Size(94, 25);
+            label5.Size = new Size(79, 20);
             label5.TabIndex = 15;
             label5.Text = "File Name:";
             // 
             // fileNameTextBox
             // 
-            fileNameTextBox.Location = new Point(214, 184);
+            fileNameTextBox.Location = new Point(171, 147);
+            fileNameTextBox.Margin = new Padding(2, 2, 2, 2);
             fileNameTextBox.Name = "fileNameTextBox";
-            fileNameTextBox.Size = new Size(212, 31);
+            fileNameTextBox.Size = new Size(170, 27);
             fileNameTextBox.TabIndex = 16;
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(97, 139);
+            label6.Location = new Point(78, 111);
+            label6.Margin = new Padding(2, 0, 2, 0);
             label6.Name = "label6";
-            label6.Size = new Size(111, 25);
+            label6.Size = new Size(93, 20);
             label6.TabIndex = 17;
             label6.Text = "FIle Location";
             // 
             // browseFolderButton
             // 
-            browseFolderButton.Location = new Point(214, 134);
+            browseFolderButton.Location = new Point(171, 107);
+            browseFolderButton.Margin = new Padding(2, 2, 2, 2);
             browseFolderButton.Name = "browseFolderButton";
-            browseFolderButton.Size = new Size(212, 34);
+            browseFolderButton.Size = new Size(170, 27);
             browseFolderButton.TabIndex = 18;
             browseFolderButton.Text = "Browse";
             browseFolderButton.UseVisualStyleBackColor = true;
@@ -207,10 +224,11 @@
             // 
             // folderTextBox
             // 
-            folderTextBox.Location = new Point(454, 133);
+            folderTextBox.Location = new Point(363, 106);
+            folderTextBox.Margin = new Padding(2, 2, 2, 2);
             folderTextBox.Name = "folderTextBox";
             folderTextBox.ReadOnly = true;
-            folderTextBox.Size = new Size(731, 31);
+            folderTextBox.Size = new Size(586, 27);
             folderTextBox.TabIndex = 19;
             // 
             // playlistCheckBox
@@ -218,18 +236,21 @@
             playlistCheckBox.AllowDrop = true;
             playlistCheckBox.AutoSize = true;
             playlistCheckBox.BackColor = SystemColors.Window;
-            playlistCheckBox.Location = new Point(509, 180);
+            playlistCheckBox.Location = new Point(407, 144);
+            playlistCheckBox.Margin = new Padding(2, 2, 2, 2);
             playlistCheckBox.Name = "playlistCheckBox";
-            playlistCheckBox.Size = new Size(232, 29);
+            playlistCheckBox.Size = new Size(195, 24);
             playlistCheckBox.TabIndex = 20;
             playlistCheckBox.Text = "Download whole playlist";
             playlistCheckBox.UseVisualStyleBackColor = false;
+            playlistCheckBox.CheckedChanged += playlistCheckBox_CheckedChanged;
             // 
             // stopButton
             // 
-            stopButton.Location = new Point(802, 180);
+            stopButton.Location = new Point(642, 144);
+            stopButton.Margin = new Padding(2, 2, 2, 2);
             stopButton.Name = "stopButton";
-            stopButton.Size = new Size(112, 153);
+            stopButton.Size = new Size(90, 122);
             stopButton.TabIndex = 21;
             stopButton.Text = "STOP";
             stopButton.UseVisualStyleBackColor = true;
@@ -237,9 +258,9 @@
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1203, 516);
+            ClientSize = new Size(962, 413);
             Controls.Add(stopButton);
             Controls.Add(playlistCheckBox);
             Controls.Add(folderTextBox);
@@ -262,9 +283,11 @@
             Controls.Add(downloadButton);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
+            Margin = new Padding(2, 2, 2, 2);
             MaximizeBox = false;
             Name = "Form1";
             Text = "YT2D2MP3";
+            Load += Form1_Load;
             ResumeLayout(false);
             PerformLayout();
         }
